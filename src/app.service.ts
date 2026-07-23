@@ -1,22 +1,23 @@
+import { Injectable } from '@nestjs/common';
+
 import { YtDlp } from '@choewy/yt-dlp';
-import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { randomUUID } from 'crypto';
+
+import { parseYoutubeKey } from './helpers/parse-youtube-key';
 
 @Injectable()
-export class AppService implements OnApplicationBootstrap {
-  getHello(): string {
-    return 'Hello World!';
-  }
+export class AppService {
+  async download(url: string) {
+    const id = `${Date.now()}-${randomUUID()}`;
+    const key = parseYoutubeKey(url);
 
-  async onApplicationBootstrap() {
-    const key = 'axYkpXTaxCw';
-    const url = `https://www.youtube.com/watch?v=${key}`;
-    const output = `assets/${Date.now()}.mp4`;
-
-    await new YtDlp({ url })
+    await new YtDlp({ url: `https://www.youtube.com/watch?v=${key}` })
       .format('bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best')
       .mergeFormat('mp4')
-      .output(output)
+      .output(`assets/${id}.mp4`)
       .video()
       .download();
+
+    return id;
   }
 }

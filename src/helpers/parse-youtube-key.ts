@@ -29,7 +29,7 @@ export function parseYoutubeKey(url: string) {
     case 'youtube.com':
     case 'www.youtube.com':
       if (target.pathname === '/watch') {
-        key = target.pathname.slice(1);
+        key = target.searchParams.get('v') || '';
       } else if (target.pathname.startsWith('/shorts/')) {
         key = target.pathname.split('/')[2];
       }
